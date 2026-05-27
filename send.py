@@ -1,55 +1,63 @@
 import streamlit as st
-import time
+import requests
+import urllib.parse
 
-st.set_page_config(page_title="TikTok Booster PRANK", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="AI Image Generator", page_icon="🎨", layout="centered")
 
-st.title("⚡ أداة توليد وزيادة متابعين تيك توك الفورية")
-st.write("🔒 سيرفر آمن | قم بزيادة إحصائيات حسابك وضخ المتابعين في ثوانٍ.")
+st.title("🎨 مولد الصور الذكي بالذكاء الاصطناعي")
+st.write("اكتب الوصف باللغة الإنجليزية في الأسفل، وسيقوم الذكاء الاصطناعي برسم الصورة لك مجاناً فوراً.")
 
-# إدخال البيانات الوهمية
-username = st.text_input("أدخل اسم المستخدم المراد تزويده (بدون @):", placeholder="مثال: ahmed_user")
+# حقل إدخال الوصف النصي للصورة
+prompt = st.text_input("اكتب وصف الصورة (يفضل بالإنجليزية):", placeholder="مثال: a futuristic flying car in a cyberpunk city")
 
+# خيارات إضافية لتحسين جودة وتصميم الصورة
 col1, col2 = st.columns(2)
 with col1:
-    service = st.selectbox("اختر نوع الخدمة المطلوبة:", ["🚀 متابعين حقيقيين (Followers)", "👁️ مشاهدات إكسبلور (Views)", "❤️ إعجابات فورية (Likes)"])
+    style = st.selectbox("اختر نمط الصورة والتصميم:", ["Realistic (واقعي)", "Anime (أنمي)", "Cyberpunk (سايبر بانك)", "3D Render (ثلاثي الأبعاد)", "Oil Painting (لوحة زيتية)"])
 with col2:
-    amount = st.selectbox("اختر الكمية المطلوبة للضخ:", ["+5,000", "+10,000", "+50,000", "+100,000"])
+    aspect_ratio = st.selectbox("اختر أبعاد الصورة (المقاس):", ["1:1 (مربع)", "16:9 (عريض للشاشات)", "9:16 (طولي للموبايل)"])
 
-if st.button("شحن الحساب وبدء الضخ تلقائياً 📦"):
-    if username:
-        username = username.strip().replace("@", "")
-        
-        # تأثيرات برمجية وهمية لإبهام المستخدم (شغل هكرز)
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        
-        status_text.text("🔍 جاري فحص جدار حماية تيك توك وتخطي الأمان...")
-        time.sleep(1.5)
-        progress_bar.progress(25)
-        
-        status_text.text(f"📡 تم الاتصال بنجاح بقاعدة البيانات الخاصة بـ @{username}")
-        time.sleep(1.5)
-        progress_bar.progress(50)
-        
-        status_text.text(f"⚙️ جاري تجهيز حزمة الـ {amount} وإرسالها للسيرفر الخلفي...")
-        time.sleep(1.5)
-        progress_bar.progress(75)
-        
-        status_text.text("⚡ جاري اللمسات الأخيرة وفك التشفير...")
-        time.sleep(1.5)
-        progress_bar.progress(100)
-        
-        st.success(f"🎉 مبروك! تم إرسال طلبك بنجاح إلى سيرفر التزويد الخاص بـ @{username}")
-        st.divider()
-        
-        # نتيجة مبهرة وهمية وثابتة للمستخدم
-        st.subheader("📋 تقرير السيرفر النهائي:")
-        st.info(f"الحساب المستهدف: @{username}")
-        st.metric(label="الحالة الحالية في التيك توك:", value="🟢 جاري الضخ الآن... (In Progress)")
-        st.metric(label="الكمية المضافة المجدولة:", value=amount)
-        
-        # رسالة المقلب النهائية
-        st.warning("⚠️ تنبيه أخير: قد يستغرق وصول الكمية بالكامل إلى حسابك من 5 إلى 10 دقائق بسبب الضغط على السيرفر! شارك الأداة مع أصدقائك لتسريع العملية.")
-        st.balloons()
+if st.button("توليد ورسم الصورة الآن 🚀"):
+    if prompt:
+        with st.spinner("⏳ جاري إرسال الوصف لسيرفرات الذكاء الاصطناعي ومعالجة الصورة..."):
+            
+            # دمج النمط المختار مع الوصف النصي لضمان جودة عالية
+            full_prompt = f"{prompt}, {style}, highly detailed, 4k resolution"
+            
+            # تحويل النص ليكون متوافقاً مع روابط الإنترنت (URL Encoding)
+            encoded_prompt = urllib.parse.quote(full_prompt)
+            
+            # تحديد الأبعاد البرمجية للصورة بناءً على اختيار المستخدم
+            width, height = 1024, 1024
+            if aspect_ratio == "16:9 (عريض للشاشات)":
+                width, height = 1280, 720
+            elif aspect_ratio == "9:16 (طولي للموبايل)":
+                width, height = 720, 1280
+                
+            # رابط الـ API المجاني المباشر لتوليد الصور
+            image_url = f"https://pollinations.ai{encoded_prompt}?width={width}&height={height}&seed={random_seed := time_time := int(100)}&nologo=true"
+            
+            try:
+                # التحقق من أن السيرفر استجاب وجاهز لعرض الصورة
+                response = requests.get(image_url, timeout=15)
+                
+                if response.status_code == 200:
+                    st.success("✨ تم توليد ورسم الصورة بنجاح!")
+                    st.divider()
+                    
+                    # عرض الصورة الناتجة في الموقع للمستخدم
+                    st.image(image_url, caption=f"الوصف المعالج: {prompt}", use_container_width=True)
+                    
+                    # توفير زر لتحميل الصورة مباشرة على جهاز المستخدم
+                    st.download_button(
+                        label="📥 تحميل الصورة بجودة عالية",
+                        data=response.content,
+                        file_name="ai_generated_image.jpg",
+                        mime="image/jpeg"
+                    )
+                else:
+                    st.error("❌ السيرفر مشغول حالياً، يرجى إعادة المحاولة بعد ثوانٍ قليلة.")
+            except Exception as e:
+                st.error("⚠️ فشل الاتصال بسيرفر التوليد، تحقق من جودة الإنترنت لديك.")
     else:
-        st.error("من فضلك اكتب اسم الحساب أولاً لبدء العملية!")
+        st.error("من فضلك اكتب وصفاً للصورة أولاً لكي يستطيع الذكاء الاصطناعي رسمها!")
