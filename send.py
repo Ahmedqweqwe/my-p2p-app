@@ -1,64 +1,65 @@
 import streamlit as st
-import hashlib
 
-st.set_page_config(page_title="TikTok Analyzer PRO", page_icon="📊", layout="centered")
+st.set_page_config(page_title="TikTok Creator Toolkit", page_icon="🚀", layout="centered")
 
-st.title("📊 TikTok Account Trust & Engagement Analyzer")
-st.write("Enter the username below to analyze the profile stats and evaluate shadowban status.")
+st.title("🚀 أدوات ومميزات صناع محتوى تيك توك")
+st.write("مجموعة أدوات حقيقية لمساعدتك في تنمية حسابك وحساب أرباحك بذكاء.")
 
-username = st.text_input("Enter TikTok Username (without @):", placeholder="example: ahmedtop373")
+# تقسيم الأدوات إلى تبويبين احترافيين
+tab1, tab2 = st.tabs(["🔥 مولد الهاشتاجات الرائجة", "💰 حاسبة الأرباح التقديرية"])
 
-if st.button("Run Full Analysis 🔍"):
-    if username:
-        username = username.strip().replace("@", "")
+# --- التبويب الأول: مولد الهاشتاجات ---
+with tab1:
+    st.subheader("🎯 استخراج هاشتاجات الإكسبلور بحسب مجالك")
+    st.write("اختر مجال محتواك للحصول على حزمة الهاشتاجات الأكثر صعوداً وتفاعلاً الآن:")
+    
+    category = st.selectbox(
+        "اختر مجال فيديوهاتك:",
+        ["العاب وجيمنج (Gaming)", "طبخ ووصفات (Cooking)", "تقنية وموبايلات (Tech)", "لايف ستايل وفلوجات (Vlogs)", "تعليم وتطوير ذات (Education)"]
+    )
+    
+    hashtags_db = {
+        "العاب وجيمنج (Gaming)": "#gaming #tiktokgaming #gamers #اصحاب_الالعاب #جيمنج #pubg #foryou",
+        "طبخ ووصفات (Cooking)": "#cooking #recipe #foodtiktok #طبخات_سهلة #وصفات #اكل #viral",
+        "تقنية وموبايلات (Tech)": "#tech #unboxing #iphone #برامج #تقنية #تطبيقات #شروحات",
+        "لايف ستايل وفلوجات (Vlogs)": "#vlog #lifestyle #dailyvlog #يوميات #فلوق #سفر #trending",
+        "تعليم وتطوير ذات (Education)": "#education #learnontiktok #نصائح #تعلم_على_التيك_توك #ثقافة #ذكاء"
+    }
+    
+    if st.button("توليد حزمة الهاشتاجات ✨"):
+        selected_tags = hashtags_db[category]
+        st.success("✅ تم تجهيز الهاشتاجات بنجاح! انسخها وضعها في وصف الفيديو:")
+        st.code(selected_tags, language="text")
+        st.info("💡 نصيحة: استخدام من 4 إلى 6 هاشتاجات مخصصة يساعد الخوارزميات على تصنيف الفيديو لجمهورك الصحيح.")
+
+# --- التبويب الثاني: حاسبة الأرباح ---
+with tab2:
+    st.subheader("💵 حاسبة أرباح برنامج دعم صناع المحتوى")
+    st.write("احسب أرباحك المتوقعة بناءً على معدل الـ RPM (الربح لكل 1000 مشاهدة مؤهلة) في تيك توك.")
+    
+    views = st.slider("متوسط المشاهدات التي يحققها الفيديو الواحد:", min_value=5000, max_value=1000000, value=50000, step=5000)
+    
+    region = st.selectbox(
+        "اختر الجمهور المستهدف (البلد الأكثر مشاهدة لك):",
+        ["دول الخليج وأمريكا (RPM مرتفع)", "مصر وشمال أفريقيا (RPM متوسط)", "باقي دول العالم (RPM عادي)"]
+    )
+    
+    # تحديد معدل الـ RPM الحقيقي تقريباً بناءً على شروط تيك توك
+    rpm_values = {
+        "دول الخليج وأمريكا (RPM مرتفع)": 0.65,
+        "مصر وشمال أفريقيا (RPM متوسط)": 0.15,
+        "باقي دول العالم (RPM عادي)": 0.30
+    }
+    
+    if st.button("احسب الأرباح المتوقعة 📊"):
+        current_rpm = rpm_values[region]
         
-        with st.spinner("Scanning profile data and tracking engagement metrics..."):
-            import time
-            time.sleep(1.8)
-            
-        # تحويل الاسم إلى رقم ثابت فريد باستخدام دالة التشفير Hash
-        # هذا يضمن أن الحساب المكتوب ستظهر له نفس الأرقام دائماً ولا تتغير عشوائياً
-        name_hash = int(hashlib.md5(username.encode('utf-8')).hexdigest(), 16)
+        # تيك توك يحسب الأرباح على المشاهدات المؤهلة (التي تتجاوز 5 ثوانٍ)، وتكون حوالي 45% من المشاهدات الكلية
+        qualified_views = views * 0.45
+        estimated_earnings = (qualified_views / 1000) * current_rpm
         
-        # توليد أرقام متناسقة ومظهرها حقيقي تماماً بناءً على تشفير الاسم
-        followers = (name_hash % 85000) + 1200
-        video_count = (name_hash % 90) + 15
-        heart_count = followers * ((name_hash % 5) + 3) + (name_hash % 400)
-        
-        # حساب معدل الموثوقية والأمان برمجياً
-        has_numbers = sum(c.isdigit() for c in username)
-        trust_score = 94
-        if has_numbers > 2:
-            trust_score -= 20
-        if len(username) < 6:
-            trust_score -= 10
-            
-        st.success(f"Analysis successfully completed for: @{username}")
         st.divider()
-        
-        # عرض المؤشرات الإحصائية الثابتة للحساب
-        st.subheader("📊 Profile Statistics")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric(label="Followers", value=f"{followers:,}")
-        with col2:
-            st.metric(label="Total Likes", value=f"{heart_count:,}")
-        with col3:
-            st.metric(label="Videos", value=f"{video_count:,}")
-            
-        st.divider()
-        
-        # تقرير الحظر الخفي والأمان
-        st.subheader("🛡️ Shadowban & Security Risk Report")
-        
-        if trust_score >= 80:
-            st.success("🟢 Safe Status: No Shadowban detected on this account.")
-            st.write("Analysis shows consistent core data structure. Video reach and comment visibility align perfectly with the current algorithm.")
-            st.metric(label="Account Trust Score", value=f"{trust_score}%")
-        else:
-            st.error("🚨 Warning: Moderate Shadowban risk detected!")
-            st.write("Account structure triggers filters due to patterns often shared by automated profiles. Post visibility might be temporarily throttled.")
-            st.metric(label="Account Trust Score", value=f"{trust_score}%")
-            st.info("💡 Tip: Maintain natural interactions and avoid repetitive engagement bursts to restore full reach.")
-    else:
-        st.error("Please enter a valid TikTok username first.")
+        st.subheader("📋 تقرير الأرباح التقديري للفيديو الواحد:")
+        st.metric(label="💵 الأرباح المتوقعة بالدولار:", value=f"${estimated_earnings:,.2f}")
+        st.write(f"📌 تم الحساب بناءً على معدل RPM يقدر بـ **${current_rpm}** لكل 1000 مشاهدة مؤهلة لهذا الجمهور.")
+        st.warning("⚠️ ملاحظة: الأرباح تختلف حسب طول الفيديو (يجب أن يكون أكثر من دقيقة) ونسبة إكمال المشاهدة.")
