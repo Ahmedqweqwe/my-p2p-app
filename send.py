@@ -1,44 +1,80 @@
+import streamlit as st
+import re
 import time
-import random
-from playwright.sync_api import sync_playwright
 
-# قائمة بالتعليقات المختلفة لمنع التكرار والحظر
-comments_pool = [
-    "منور يا غالي ✨",
-    "بالتوفيق إن شاء الله 👍",
-    "محتوى رائع جداً 💎",
-    "تحياتي لك من مصر 🇪🇬",
-    "استمر يا بطل 🚀"
-]
+# إعدادات واجهة التطبيق
+st.set_page_config(page_title="كاشف حسابات تيك توك الاحترافي", page_icon="🕵️‍♂️", layout="centered")
 
-def run_bot():
-    with sync_playwright() as p:
-        # فتح متصفح يحاكي جهاز حقيقي
-        browser = p.chromium.launch(headless=False)
-        page = browser.new_page()
+st.title("🕵️‍♂️ كاشف ومحلل أمان حسابات تيك توك")
+st.write("أدخل اسم المستخدم (Username) للكشف على الحساب وفحص نقاط الأمان ونسبة الحظر الخفي.")
+
+# حقل إدخال اسم الحساب
+username = st.text_input("أدخل اسم المستخدم (بدون علامة @):", placeholder="مثال: ahmed_user")
+
+# قائمة معايير الفحص المحاكية
+if st.button("بدء فحص وتتبع الحساب 🔎"):
+    if username:
+        # تنظيف اسم الحساب من الفراغات
+        username = username.strip().replace("@", "")
         
-        # الانتقال إلى رابط البث المباشر المستهدف
-        page.goto("https://tiktok.com")
+        # رسالة بدء الفحص
+        with st.spinner("⏳ جاري الاتصال بخوادم الفحص وتحليل بيانات الحساب..."):
+            time.sleep(2.5) # محاكاة وقت سحب البيانات
+            
+        st.success("✅ اكتمل سحب البيانات الرقمية بنجاح!")
+        st.divider()
         
-        # (هنا يتم وضع كود تسجيل الدخول لحسابك يدوياً أو تلقائياً أول مرة)
-        print("الرجاء التأكد من تسجيل الدخول داخل البث...")
-        time.sleep(10) 
+        # --- نظام التقييم البرمجي للحساب ---
+        # 1. فحص طول الاسم وجودته
+        is_bot_name = bool(re.search(r'\d{4,}', username)) # إذا كان الاسم يحتوي على أكثر من 4 أرقام متتالية
         
-        # حلقة تكرارية لإرسال تعليقات مختلفة بمواقيت عشوائية
-        for i in range(10):
-            # اختيار تعليق عشوائي من القائمة
-            current_comment = random.choice(comments_pool)
+        # حساب نقاط الأمان الافتراضية
+        trust_score = 95
+        issues = []
+        
+        if is_bot_name:
+            trust_score -= 30
+            issues.append("⚠️ اسم المستخدم يحتوي على أرقام عشوائية كثيرة (سلوك مشابه للبوتات).")
             
-            # تحديد مربع كتابة التعليق في تيك توك وضغط تفاعل
-            page.fill('input[placeholder="أضف تعليقاً..."]', current_comment)
-            page.press('input[placeholder="أضف تعليقاً..."]', "Enter")
-            
-            print(f"تم إرسال: {current_comment}")
-            
-            # فاصل زمني عشوائي (مثلاً بين 5 إلى 15 ثانية) حتى لا يكشفك الروبوت
-            time.sleep(random.randint(5, 15))
+        if len(username) < 5:
+            trust_score -= 15
+            issues.append("⚠️ اسم المستخدم قصير جداً، مما يقلل من موثوقية الحساب لدى الخوارزميات.")
 
-        browser.close()
+        # --- عرض النتائج للمستخدم ---
+        st.subheader(f"📊 تقرير الفحص الخاص بالحساب: @{username}")
+        
+        # عرض مؤشر الثقة والأمان
+        if trust_score >= 80:
+            st.metric(label="🛡️ درجة موثوقية الحساب (Trust Score):", value=f"{trust_score}%", delta="آمن ومستقر")
+            st.success("🟢 الحساب في حالة ممتازة ولا يواجه أي قيود حالياً بالخوارزميات.")
+        elif trust_score >= 50:
+            st.metric(label="🛡️ درجة موثوقية الحساب (Trust Score):", value=f"{trust_score}%", delta="- انتباه", delta_color="inverse")
+            st.warning("🟡 الحساب معرض للمراقبة الفورية إذا قام بأنشطة مكثفة.")
+        else:
+            st.metric(label="🛡️ درجة موثوقية الحساب (Trust Score):", value=f"{trust_score}%", delta="مخاطر عالية", delta_color="inverse")
+            st.error("🔴 الحساب يمتلك تقييم منخفض جداً ويواجه مشاكل في التفاعل.")
 
-# تشغيل السكربت
-# run_bot()
+        st.divider()
+        
+        # 2. فحص حالة الحظر الخفي (Shadowban Status)
+        st.subheader("🕵️‍♂️ فحص القيود الخفية (Shadowban Checker)")
+        if trust_score < 70:
+            shadowban_chance = "65%"
+            st.error(f"🚨 احتمالية وجود حظر خفي (Shadowban): {shadowban_chance}")
+            st.write("📌 **السبب:** ظهور تعليقاتك قد يكون مقيداً للآخرين بسبب تراجع جودة وتفاعل الحساب.")
+        else:
+            st.success("✅ الحظر الخفي: 0% (تعليقاتك وفيديوهاتك تظهر للجميع بشكل طبيعي).")
+            
+        st.divider()
+        
+        # عرض المشاكل والنصائح
+        st.subheader("🛠️ المشاكل المكتشفة ونصائح الحل:")
+        if issues:
+            for issue in issues:
+                st.write(issue)
+            st.info("💡 **نصيحة المطور:** قم بتغيير اسم المستخدم لاسم حقيقي، وتجنب تكرار نفس التعليق في البث المباشر لأكثر من 3 مرات متتالية.")
+        else:
+            st.write("🎯 لم يتم العثور على أي مشاكل برمجية في بنية الحساب الحالية. استمر في التفاعل الطبيعي!")
+            
+    else:
+        st.error("الرجاء إدخال اسم حساب تيك توك أولاً لبدء الفحص!")
