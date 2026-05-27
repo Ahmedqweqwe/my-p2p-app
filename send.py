@@ -1,42 +1,48 @@
-import streamlit as st
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
+import json
+import re
 
-st.set_page_config(page_title="Keyword Generator", page_icon="🔑", layout="centered")
+# إعداد متصفح كروم بشكل مخفي (Headless) لسرعة الأداء
+options = webdriver.ChromeOptions()
+options.add_argument("--headless")
+options.add_argument("--disable-gpu")
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
-st.title("🔑 أداة استخراج الكلمات المفتاحية والدلالية")
-st.write("اختر مجال محتواك للحصول على أقوى الكلمات الدلالية المستهدفة لزيادة المشاهدات وتصدر نتائج البحث.")
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# قائمة اختيار نوع المنصة والمجال
-platform = st.selectbox("اختر المنصة المستهدفة:", ["TikTok (تيك توك)", "YouTube & SEO (يوتيوب ومواقع)"])
+# رابط فيديو التيك توك المراد فحصه
+video_url = "https://www.tiktok.com/@username/video/1234567890123456789"
 
-category = st.selectbox(
-    "اختر مجال المحتوى الخاص بك:",
-    ["ألعاب وجيمنج", "طبخ ومأكولات", "تقنية وشروحات", "فلوجات وتسلية", "تعليم ونصائح"]
-)
-
-# قاعدة بيانات الكلمات المفتاحية الأكثر بحثاً بالوطن العربي
-keywords_db = {
-    "TikTok (تيك توك)": {
-        "ألعاب وجيمنج": "ببجي موبايل، تحدي، لقطات جلد، محاكي، قيمنق، قيتشات، تيك توك جيمنج، بث مباشر ببجي",
-        "طبخ ومأكولات": "وصفة سهلة، طبخات تيك توك، عشاء سريع، حلى بارد، أكل سريع، طريقة عمل، طبخ سريع",
-        "تقنية وشروحات": "خدع ايفون، ميزات سرية، برامج مجانية، تطبيقات أندرويد، تسريع الموبايل، شروحات تقنية",
-        "فلوجات وتسلية": "يومياتي، فلوق، مقلب، تحدي ضحك، سافرت، تجربة غريبة، مشترياتي، قصة واقعية",
-        "تعليم ونصائح": "نصائح للدراسة، كيف تتعلم، معلومات عامة، تطوير الذات، تنظيم الوقت، لغات أونلاين"
-    },
-    "YouTube & SEO (يوتيوب ومواقع)": {
-        "ألعاب وجيمنج": "تحميل لعبة، تختيم لعبة، شرح مودات، جيم بلاي، أفضل ألعاب للكمبيوتر، ألعاب أندرويد 2026",
-        "طبخ ومأكولات": "طريقة تحضير، مقادير كيكة، وصفات اقتصادية، مطبخ هبة، أكلات شهر رمضان، حلويات سريعة",
-        "تقنية وشروحات": "شرح برامج، الربح من الإنترنت، إنشاء موقع، حل مشكلة، كورس بايثون مجاناً، مراجعة هاتف",
-        "فلوجات وتسلية": "فلوق السفر، تحديات حماسية، فتح هدايا، كواليس تصوير، يوم كامل في، مقالب مضحكة",
-        "تعليم ونصائح": "شرح درس، تعلم من الصفر، كورسات مجانية، نصائح للنجاح، ملخص كتاب، كيف تبدأ مشروع"
-    }
-}
-
-if st.button("استخراج الكلمات المفتاحية الفيدرالية 🚀"):
-    selected_keywords = keywords_db[platform][category]
+try:
+    driver.get(video_url)
     
-    st.success("✅ تم استخراج أقوى الكلمات الدلالية بنجاح:")
-    st.write("قم بنسخ هذه الكلمات ووضعها في وصف الفيديو أو علامات (Tags) موقعك:")
+    # 1. محاولة استخراج النص البديل (Alt Text) مباشرة من عنصر الفيديو أو الصورة المصغرة
+    try:
+        video_element = driver.find_element(By.TAG_NAME, "img") # تيك توك يضع بوستر الفيديو كصورة تحتوي على alt
+        alt_text = video_element.get_attribute("alt")
+        print(f"[+] النص البديل المخفي (Alt Text): {alt_text}\n")
+    except Exception:
+        print("[-] لم يتم العثور على نص بديل مباشر.")
+
+    # 2. استخراج البيانات البرمجية المخفية (Metadata) من كود الصفحة
+    page_source = driver.page_source
     
-    # عرض الكلمات داخل مربع كود ليسهل على المستخدم نسخها بضغطة زر
-    st.code(selected_keywords, language="text")
-    st.info("💡 نصيحة سيو: توزيع هذه الكلمات داخل أول سطرين من وصف المحتوى يرفع نسبة ظهورك في مقترحات البحث بشكل ملحوظ.")
+    # البحث عن كتل البيانات المخفية (JSON) داخل الكود
+    # تيك توك يغير المسميات باستمرار، ولكن الفكرة واحدة وهي البحث عن الـ Scripts التي تحتوي على بيانات الفيديو
+    json_data = re.search(r'<script id="__UNIVERSAL_DATA_FOR_NEXT_DEV__" type="application/json">(.*?)</script>', page_source)
+    
+    if json_data:
+        data = json.loads(json_data.group(1))
+        
+        # هنا نقوم بالدخول تفصيلياً داخل الـ JSON لاستخراج الكلمات المفتاحية (تختلف التقسيمة حسب تحديثات تيك توك)
+        print("[+] تم العثور على ملف البيانات المخفي! يمكنك فحص الكلمات المفتاحية منه:")
+        # مثال لطباعة الكلمات الدلالية أو الوسوم المرتبطة بالفيديو في الخلفية
+        # print(json.dumps(data, indent=4, ensure_ascii=False)) 
+    else:
+        print("[-] لم يتم العثور على كتلة البيانات البرمجية المباشرة (قد تحتاج لتحديث الـ Regex).")
+
+finally:
+    driver.quit()
