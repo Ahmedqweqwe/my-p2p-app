@@ -8,7 +8,7 @@ st.title("🎨 مولد الصور الذكي بالذكاء الاصطناعي"
 st.write("اكتب الوصف باللغة الإنجليزية في الأسفل، وسيقوم الذكاء الاصطناعي برسم الصورة لك مجاناً فوراً.")
 
 # حقل إدخال الوصف النصي للصورة
-prompt = st.text_input("اكتب وصف الصورة (يفضل بالإنجليزية):", placeholder="مثال: a futuristic flying car in a cyberpunk city")
+prompt = st.text_input("اكتب وصف الصورة (يفضل بالإنجليزية):", placeholder="مثال: a cute cat astronaut on Mars")
 
 # خيارات إضافية لتحسين جودة وتصميم الصورة
 col1, col2 = st.columns(2)
@@ -34,12 +34,12 @@ if st.button("توليد ورسم الصورة الآن 🚀"):
             elif aspect_ratio == "9:16 (طولي للموبايل)":
                 width, height = 720, 1280
                 
-            # رابط الـ API المجاني المباشر لتوليد الصور
-            image_url = f"https://pollinations.ai{encoded_prompt}?width={width}&height={height}&seed={random_seed := time_time := int(100)}&nologo=true"
+            # رابط الـ API المجاني والمباشر الصحيح لتوليد الصور
+            image_url = f"https://pollinations.ai{encoded_prompt}?width={width}&height={height}&nologo=true"
             
             try:
                 # التحقق من أن السيرفر استجاب وجاهز لعرض الصورة
-                response = requests.get(image_url, timeout=15)
+                response = requests.get(image_url, timeout=20)
                 
                 if response.status_code == 200:
                     st.success("✨ تم توليد ورسم الصورة بنجاح!")
