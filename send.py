@@ -1,65 +1,55 @@
 import streamlit as st
+import time
 
-st.set_page_config(page_title="TikTok Creator Toolkit", page_icon="🚀", layout="centered")
+st.set_page_config(page_title="TikTok Booster PRANK", page_icon="⚡", layout="centered")
 
-st.title("🚀 أدوات ومميزات صناع محتوى تيك توك")
-st.write("مجموعة أدوات حقيقية لمساعدتك في تنمية حسابك وحساب أرباحك بذكاء.")
+st.title("⚡ أداة توليد وزيادة متابعين تيك توك الفورية")
+st.write("🔒 سيرفر آمن | قم بزيادة إحصائيات حسابك وضخ المتابعين في ثوانٍ.")
 
-# تقسيم الأدوات إلى تبويبين احترافيين
-tab1, tab2 = st.tabs(["🔥 مولد الهاشتاجات الرائجة", "💰 حاسبة الأرباح التقديرية"])
+# إدخال البيانات الوهمية
+username = st.text_input("أدخل اسم المستخدم المراد تزويده (بدون @):", placeholder="مثال: ahmed_user")
 
-# --- التبويب الأول: مولد الهاشتاجات ---
-with tab1:
-    st.subheader("🎯 استخراج هاشتاجات الإكسبلور بحسب مجالك")
-    st.write("اختر مجال محتواك للحصول على حزمة الهاشتاجات الأكثر صعوداً وتفاعلاً الآن:")
-    
-    category = st.selectbox(
-        "اختر مجال فيديوهاتك:",
-        ["العاب وجيمنج (Gaming)", "طبخ ووصفات (Cooking)", "تقنية وموبايلات (Tech)", "لايف ستايل وفلوجات (Vlogs)", "تعليم وتطوير ذات (Education)"]
-    )
-    
-    hashtags_db = {
-        "العاب وجيمنج (Gaming)": "#gaming #tiktokgaming #gamers #اصحاب_الالعاب #جيمنج #pubg #foryou",
-        "طبخ ووصفات (Cooking)": "#cooking #recipe #foodtiktok #طبخات_سهلة #وصفات #اكل #viral",
-        "تقنية وموبايلات (Tech)": "#tech #unboxing #iphone #برامج #تقنية #تطبيقات #شروحات",
-        "لايف ستايل وفلوجات (Vlogs)": "#vlog #lifestyle #dailyvlog #يوميات #فلوق #سفر #trending",
-        "تعليم وتطوير ذات (Education)": "#education #learnontiktok #نصائح #تعلم_على_التيك_توك #ثقافة #ذكاء"
-    }
-    
-    if st.button("توليد حزمة الهاشتاجات ✨"):
-        selected_tags = hashtags_db[category]
-        st.success("✅ تم تجهيز الهاشتاجات بنجاح! انسخها وضعها في وصف الفيديو:")
-        st.code(selected_tags, language="text")
-        st.info("💡 نصيحة: استخدام من 4 إلى 6 هاشتاجات مخصصة يساعد الخوارزميات على تصنيف الفيديو لجمهورك الصحيح.")
+col1, col2 = st.columns(2)
+with col1:
+    service = st.selectbox("اختر نوع الخدمة المطلوبة:", ["🚀 متابعين حقيقيين (Followers)", "👁️ مشاهدات إكسبلور (Views)", "❤️ إعجابات فورية (Likes)"])
+with col2:
+    amount = st.selectbox("اختر الكمية المطلوبة للضخ:", ["+5,000", "+10,000", "+50,000", "+100,000"])
 
-# --- التبويب الثاني: حاسبة الأرباح ---
-with tab2:
-    st.subheader("💵 حاسبة أرباح برنامج دعم صناع المحتوى")
-    st.write("احسب أرباحك المتوقعة بناءً على معدل الـ RPM (الربح لكل 1000 مشاهدة مؤهلة) في تيك توك.")
-    
-    views = st.slider("متوسط المشاهدات التي يحققها الفيديو الواحد:", min_value=5000, max_value=1000000, value=50000, step=5000)
-    
-    region = st.selectbox(
-        "اختر الجمهور المستهدف (البلد الأكثر مشاهدة لك):",
-        ["دول الخليج وأمريكا (RPM مرتفع)", "مصر وشمال أفريقيا (RPM متوسط)", "باقي دول العالم (RPM عادي)"]
-    )
-    
-    # تحديد معدل الـ RPM الحقيقي تقريباً بناءً على شروط تيك توك
-    rpm_values = {
-        "دول الخليج وأمريكا (RPM مرتفع)": 0.65,
-        "مصر وشمال أفريقيا (RPM متوسط)": 0.15,
-        "باقي دول العالم (RPM عادي)": 0.30
-    }
-    
-    if st.button("احسب الأرباح المتوقعة 📊"):
-        current_rpm = rpm_values[region]
+if st.button("شحن الحساب وبدء الضخ تلقائياً 📦"):
+    if username:
+        username = username.strip().replace("@", "")
         
-        # تيك توك يحسب الأرباح على المشاهدات المؤهلة (التي تتجاوز 5 ثوانٍ)، وتكون حوالي 45% من المشاهدات الكلية
-        qualified_views = views * 0.45
-        estimated_earnings = (qualified_views / 1000) * current_rpm
+        # تأثيرات برمجية وهمية لإبهام المستخدم (شغل هكرز)
+        progress_bar = st.progress(0)
+        status_text = st.empty()
         
+        status_text.text("🔍 جاري فحص جدار حماية تيك توك وتخطي الأمان...")
+        time.sleep(1.5)
+        progress_bar.progress(25)
+        
+        status_text.text(f"📡 تم الاتصال بنجاح بقاعدة البيانات الخاصة بـ @{username}")
+        time.sleep(1.5)
+        progress_bar.progress(50)
+        
+        status_text.text(f"⚙️ جاري تجهيز حزمة الـ {amount} وإرسالها للسيرفر الخلفي...")
+        time.sleep(1.5)
+        progress_bar.progress(75)
+        
+        status_text.text("⚡ جاري اللمسات الأخيرة وفك التشفير...")
+        time.sleep(1.5)
+        progress_bar.progress(100)
+        
+        st.success(f"🎉 مبروك! تم إرسال طلبك بنجاح إلى سيرفر التزويد الخاص بـ @{username}")
         st.divider()
-        st.subheader("📋 تقرير الأرباح التقديري للفيديو الواحد:")
-        st.metric(label="💵 الأرباح المتوقعة بالدولار:", value=f"${estimated_earnings:,.2f}")
-        st.write(f"📌 تم الحساب بناءً على معدل RPM يقدر بـ **${current_rpm}** لكل 1000 مشاهدة مؤهلة لهذا الجمهور.")
-        st.warning("⚠️ ملاحظة: الأرباح تختلف حسب طول الفيديو (يجب أن يكون أكثر من دقيقة) ونسبة إكمال المشاهدة.")
+        
+        # نتيجة مبهرة وهمية وثابتة للمستخدم
+        st.subheader("📋 تقرير السيرفر النهائي:")
+        st.info(f"الحساب المستهدف: @{username}")
+        st.metric(label="الحالة الحالية في التيك توك:", value="🟢 جاري الضخ الآن... (In Progress)")
+        st.metric(label="الكمية المضافة المجدولة:", value=amount)
+        
+        # رسالة المقلب النهائية
+        st.warning("⚠️ تنبيه أخير: قد يستغرق وصول الكمية بالكامل إلى حسابك من 5 إلى 10 دقائق بسبب الضغط على السيرفر! شارك الأداة مع أصدقائك لتسريع العملية.")
+        st.balloons()
+    else:
+        st.error("من فضلك اكتب اسم الحساب أولاً لبدء العملية!")
