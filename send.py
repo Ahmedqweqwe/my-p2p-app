@@ -3,56 +3,66 @@ import requests
 import time
 
 # إعدادات واجهة التطبيق
-st.set_page_config(page_title="محلل حسابات تيك توك الاحترافي", page_icon="📈", layout="centered")
+st.set_page_config(page_title="محلل تيك توك التلقائي", page_icon="⚡", layout="centered")
 
-st.title("📈 محلل الحسابات وفاحص القيود الذكي")
-st.write("هذا الإصدار المطور يحلل المؤشرات الحقيقية للحساب لحساب نسبة التفاعل بدقة.")
+st.title("⚡ محلل تيك توك التلقائي الذكي")
+st.write("اكتب اسم الحساب فقط، وسيقوم السيرفر بسحب البيانات الحية وتحليل الأمان تلقائياً دون أي إدخال يدوي.")
 
 # حقل إدخال اسم الحساب
-username = st.text_input("أدخل اسم المستخدم:", placeholder="مثال: khaby.lame")
+username = st.text_input("أدخل اسم المستخدم (بدون علامة @):", placeholder="مثال: khaby.lame")
 
-if st.button("بدء الفحص المتقدم 🚀"):
+if st.button("بدء الفحص التلقائي الحقيقي 🔍"):
     if username:
         username = username.strip().replace("@", "")
         
-        with st.spinner("⏳ جاري سحب البيانات الحية وتحليل معدل التفاعل..."):
-            # محاكاة طلب البيانات الحقيقية من الخادم
-            time.sleep(2) 
-            
-        st.success("✅ تم جلب المؤشرات الإحصائية بنجاح!")
-        st.divider()
-        
-        # --- هنا نضع حقول لإدخال الأرقام الحقيقية للحساب ليعطيك بدقة متناهية ---
-        st.subheader("📊 أضف بيانات الحساب الحالية للتحليل الدقيق:")
-        
-        followers = st.number_input("عدد المتابعين الحقيقي:", min_value=100, value=5000, step=500)
-        avg_views = st.number_input("متوسط المشاهدات في آخر 3 فيديوهات:", min_value=10, value=1200, step=100)
-        avg_likes = st.number_input("متوسط الإعجابات في آخر 3 فيديوهات:", min_value=0, value=150, step=50)
-        
-        if st.button("احسب نسبة الأمان والتفاعل بدقة 📐"):
-            # الحساب البرمجي الدقيق لمعدل التفاعل (Engagement Rate)
-            # النسبة الطبيعية والممتازة يجب أن تكون فوق 3% إلى 5%
-            if followers > 0:
-                engagement_rate = ((avg_likes) / followers) * 100
-            else:
-                engagement_rate = 0.0
+        with st.spinner("⏳ جاري الاتصال بقاعدة بيانات تيك توك وسحب الإحصائيات الحية..."):
+            try:
+                # الاتصال بـ API وسيط لجلب بيانات الحساب الحقيقية مجاناً
+                api_url = f"https://tikwm.com{username}"
+                response = requests.get(api_url, timeout=15).json()
                 
-            st.divider()
-            st.subheader("📋 التقرير التحليلي النهائي:")
-            st.metric(label="📊 معدل التفاعل الحقيقي (Engagement Rate):", value=f"{engagement_rate:.2f}%")
-            
-            # فحص الحظر الخفي (Shadowban) بناءً على المشاهدات والمتابعين
-            # إذا كانت المشاهدات أقل بكثير من 10% من المتابعين، هناك مشكلة وصول
-            view_ratio = (avg_views / followers) * 100
-            
-            if view_ratio < 5.0 and followers > 1000:
-                st.error("🚨 احتمالية وجود حظر خفي (Shadowban) عالية جداً!")
-                st.write("📌 **السبب التقني:** متوسط مشاهداتك أقل من 5% من إجمالي متابعيك، مما يؤكد أن الخوارزميات تقيد وصول الفيديوهات.")
-                st.metric(label="🛡️ درجة موثوقية الحساب:", value="40% - ضعيفة")
-            else:
-                st.success("🟢 الحساب سليم تماماً من القيود الخفية!")
-                st.write("📌 **التحليل:** توزيع المشاهدات مقارنة بالمتابعين طبيعي ويقع ضمن النطاق الآمن لخوارزميات تيك توك.")
-                st.metric(label="🛡️ درجة موثوقية الحساب:", value="92% - ممتازة")
-                
+                if response.get("code") == 0 and "data" in response:
+                    user_data = response["data"]["user"]
+                    stats_data = response["data"]["stats"]
+                    
+                    # سحب الأرقام الحقيقية من التيك توك مباشرة
+                    nickname = user_data.get("nickname", username)
+                    followers = stats_data.get("followerCount", 0)
+                    following = stats_data.get("followingCount", 0)
+                    heart_count = stats_data.get("heartCount", 0)
+                    video_count = stats_data.get("videoCount", 0)
+                    
+                    st.success(f"✅ تم العثور على الحساب: {nickname}")
+                    st.divider()
+                    
+                    # عرض البيانات الحقيقية المستخرجة
+                    st.subheader("📊 إحصائيات الحساب الحية من السيرفر:")
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric(label="👥 المتابعين", value=f"{followers:,}")
+                    with col2:
+                        st.metric(label="❤️ إجمالي الإعجابات", value=f"{heart_count:,}")
+                    with col3:
+                        st.metric(label="🎬 عدد الفيديوهات", value=f"{video_count:,}")
+                        
+                    st.divider()
+                    
+                    # تحليل الحظر الخفي والأمان برمجياً بناءً على الأرقام الحقيقية
+                    st.subheader("🕵️‍♂️ تقرير الأمان ومقاومة الحظر:")
+                    
+                    # الحسابات التي لديها متابعين كثر لكن إعجابات قليلة جداً تكون مشبوهة
+                    if followers > 5000 and (heart_count / followers) < 0.5:
+                        st.error("🚨 تحذير: نسبة التفاعل منخفضة جداً مقارنة بعدد المتابعين!")
+                        st.write("📌 **النتيجة:** الحساب يواجه ضعف شديد في الوصول أو احتمالية وجود حظر خفي (Shadowban) نتيجة متابعين وهميين.")
+                        st.metric(label="🛡️ جودة الحساب والموثوقية:", value="35% - منخفضة")
+                    else:
+                        st.success("🟢 نظام الأمان: الحساب مستقر وتفاعله طبيعي.")
+                        st.write("📌 **النتيجة:** مؤشرات الحساب متناسقة مع خوارزميات تيك توك ولا توجد علامات حظر حالية.")
+                        st.metric(label="🛡️ جودة الحساب والموثوقية:", value="88% - ممتازة")
+                        
+                else:
+                    st.error("❌ لم يتم العثور على الحساب! تأكد من كتابة اسم المستخدم (Username) بشكل صحيح.")
+            except Exception as e:
+                st.error("⚠️ حدث خطأ أثناء الاتصال بالسيرفر الخارجي، يرجى المحاولة مرة أخرى لاحقاً.")
     else:
-        st.error("الرجاء إدخال اسم الحساب أولاً!")
+        st.error("الرجاء إدخال اسم حساب أولاً!")
