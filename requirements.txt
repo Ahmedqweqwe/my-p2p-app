@@ -1,2 +1,5 @@
-selenium>=4.0.0
-webdriver-manager>=4.0.0
+__pycache__/
+*.pyc
+.env
+raw_backend_data.json
+extracted_keywords.txt
